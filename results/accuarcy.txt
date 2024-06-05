@@ -1,0 +1,9 @@
+Accuracy: 0.99
+Precision: 0.99
+Recall: 0.99
+F1 Score: 2.00
+
+ans =
+
+   792     8
+     4   796

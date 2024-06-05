@@ -13,6 +13,10 @@ Pedestrian detection is a critical task in computer vision with applications in 
 The method introduced by Dalal and Triggs utilizes Histograms of Oriented Gradients (HOG) to effectively describe the shape and appearance of human figures. The steps involved in this project include:
 
 1. **Feature Extraction**: Computing HOG descriptors for the input images.
+
+<div align="center">
+  <img src="images/methodology.png" alt="Descriptive Alt Text" width="50%">
+</div>
 2. **Training**: Using a dataset provided by the authors to train a classifier.
 3. **Detection**: Applying the trained model to detect pedestrians in test images.
 
@@ -40,13 +44,14 @@ cd pedestrian-detection-hog-matlab
 
 3. Open MATLAB and navigate to the project directory.
 
-4. Run the `train.m` script to train the model:
+4. Run the `main.m` script to train the model and extract the features
 
-5. Use the `detect.m` script to detect pedestrians in your images:
 
 ## Results
 
-The project aims to achieve robust pedestrian detection using the HOG method. Example results and performance metrics will be provided in the `results` directory.
+The project aims to achieve pedestrian detection using the HOG method. Example results and performance metrics will be provided in the results directory.
+
+Due to the lack of data, the tests were conducted on the training images, which does not present a real evaluation of the model's capabilities on unseen images.
 
 ## References
 
