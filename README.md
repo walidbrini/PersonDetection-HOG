@@ -17,6 +17,7 @@ The method introduced by Dalal and Triggs utilizes Histograms of Oriented Gradie
 <div align="center">
   <img src="images/methodology.png" alt="Descriptive Alt Text" width="50%">
 </div>
+
 2. **Training**: Using a dataset provided by the authors to train a classifier.
 3. **Detection**: Applying the trained model to detect pedestrians in test images.
 
