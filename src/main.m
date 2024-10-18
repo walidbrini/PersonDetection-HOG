@@ -1,10 +1,113 @@
 
 
+%% Gradient d'une image
+close all ; 
+clear all ; 
+clc ; 
+
+% Lire une image en entre 
+image = imread('Database\pos\B10_crop001119a.png');
+ing = im2gray(image);
+
+% Calcul du gradient
+[Or, G] = gradient(ing); 
+
+
+%% Extraction Histogramme des gradients
+
+% paramtres d'extraction et de visualisation
+[H,W]=size(ing); hCell=8; wCell=8;
+nbhCell=H/hCell; nbwCell=W/wCell;
+nbBins=9;
+
+% paramtres pour la visualisation
+param.ImageSize=[H W];
+param.WindowSize=[H W];
+param.CellSize=[hCell wCell];
+param.BlockSize=[1 1];
+param.BlockOverlap=[0 0];
+param.NumBins=9;
+param.UseSignedOrientation=0;
+
+% Extraction
+hogfeat=hogfeatures(double(ing),[1 0 -1],hCell,nbBins);
+
+% Visualisation
+visu=vision.internal.hog.Visualization(hogfeat, param);
+figure; imshow(uint8(image)); 
+hold on;
+plot(visu)
+title('HOGs manual')
+pause(0.1)
+
+
+%% Extraction de tous les features de la base de donnees 
+
+
+% Il faut se placer dans la bonne directory pwd 'O:\TraitementImage\TpDetectionPieton'
 imagefilesPos = 'Database\pos';  
-imagefilesNeg = 'Database\neg';   
+imagefilesNeg = 'Database\neg';      
 
-[train_matrix,labels] = train (imagefilesPos,imagefilesNeg);
 
+% Verifier la disponibilite du dossier contenant les images
+if ~isdir(imagefilesPos)
+  errorMessage = sprintf('Error: Ce dossier existe pas \n%s', imagefilesPos);
+  uiwait(warndlg(errorMessage));
+  return;
+end
+
+filePatternPos = fullfile(imagefilesPos, '*.png');
+filePatternNeg = fullfile(imagefilesNeg, '*.png');
+
+% Extraire le nombre d'images positives et d'images negatives
+pngFilesP = dir(filePatternPos)
+pngFilesN = dir(filePatternNeg)
+
+Np = length(pngFilesP);
+Ng = length(pngFilesN);
+
+M = nbBins * H/hCell*W/wCell;
+
+% Initialisation de la matrice des features positives
+train_matrix_pos = zeros(Np,M);
+
+% Lecture des images positives et creation de la train_matrix_pos resultat
+% de la concetenation de tous les HOG features
+for k = 1:Np
+  baseFileName = pngFilesP(k).name;
+  fullFileName = fullfile(imagefilesPos, baseFileName);
+  fprintf(1, 'Now reading %s\n', fullFileName);
+  imageArray = imread(fullFileName);
+  ing = rgb2gray(imageArray);
+  %imshow(imageArray);  % Display image.
+  %drawnow; % Force display to update immediately.
+  hogfeat  = hogfeatures(double(ing),[1 0 -1],hCell,nbBins);
+  train_matrix_pos(k,:)= hogfeat' ; 
+end
+
+
+% Initialisation de la matrice des features negatives
+train_matrix_neg = zeros(Ng,M);
+
+% Lecture des images Negative et creation de la train_matrix_neg resultat
+% de la concetenation de tous les HOG features
+
+for k = 1:Ng
+  baseFileName = pngFilesN(k).name;
+  fullFileName = fullfile(imagefilesNeg, baseFileName);
+  fprintf(1, 'Now reading %s\n', fullFileName);
+  imageArray = imread(fullFileName);
+  ing = rgb2gray(imageArray);
+  %imshow(imageArray);  % Display image.
+  %drawnow; % Force display to update immediately.
+  hogfeat  = hogfeatures(double(ing),[1 0 -1],hCell,nbBins);
+  train_matrix_neg(k,:)= hogfeat' ; 
+end
+
+% Creation de la train_matrix, la concetenation des deux train_matrix pos
+% et neg, labels pour chaque donnee 1 si positive 0 si negative
+train_matrix = [train_matrix_pos ; train_matrix_neg]; 
+labels =[ones(Np,1);zeros(Ng, 1 )];
 
 %% Analyse en Composantes Principales et Visualisation des features
 
